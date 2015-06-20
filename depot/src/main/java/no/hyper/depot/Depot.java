@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,6 +15,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by espenalmdahl on 18/06/15.
@@ -64,11 +67,11 @@ public class Depot {
 
 
     /**
-     * Store a string
+     * Store a string and keep it readable for humans
      * @param name
      * @param content
      */
-    public void store(String name, String content) {
+    public void storeString(String name, String content) {
         try {
             File f = new File(context.getFilesDir(), name);
             FileWriter writer = new FileWriter(f);
@@ -83,15 +86,21 @@ public class Depot {
 
 
 
-    public String retrieve(String name) {
+    public String retrieveString(String name) {
         try {
             File f = new File(context.getFilesDir(), name);
             FileReader reader = new FileReader(f);
             BufferedReader bufferedReader = new BufferedReader(reader);
             String line = "";
             StringBuilder builder = new StringBuilder();
+            List<String> list = new ArrayList();
             while ( (line = bufferedReader.readLine()) != null ) {
-                builder.append(line);
+                list.add(line);
+            }
+            Log.i(TAG, "Line count: " + list.size());
+
+            for ( int i = 0 ; i < list.size(); i++ ) {
+                builder.append(list.get(i));
                 builder.append("\n");
             }
             bufferedReader.close();
@@ -107,7 +116,7 @@ public class Depot {
 
 
 
-    public Object retrieveObject(String name) {
+    public Object retrieve(String name) {
 
         if (this.contains(name)) {
             try {
@@ -122,6 +131,7 @@ public class Depot {
                     Object object = ois.readObject();
 
                     ois.close();
+                    Log.i(TAG, "Object read: " + object.toString());
                     return object;
                 }
             }
@@ -143,7 +153,6 @@ public class Depot {
 
     public boolean contains(String name) {
         File file = new File(context.getFilesDir() + "/" + name);
-        return false;
-//        return file.exists();
+        return file.exists();
     }
 }
