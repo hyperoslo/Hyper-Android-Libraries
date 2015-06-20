@@ -1,40 +1,59 @@
 package no.hyper.depot;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import android.app.Application;
 import android.content.Context;
+import android.test.ApplicationTestCase;
+import android.test.InstrumentationTestCase;
+import android.util.Log;
 
-/*
-THIS MOTHERFUCKING PIECE OF TESTING SHIT DOES NOT EVEN PRETEND
-TO WORK! IT'S A MILLION TIMES EASIER TO JUST NOT WRITE BUGS!
- */
 
-@RunWith(MockitoJUnitRunner.class)
-public class DepotTest {
+public class DepotTest extends InstrumentationTestCase{
 
-    @Mock
-    Context mockContext;
+    private Context context;
 
     private static final String TEST_STRING = "Such String";
+    private static final String TEST_STRING_NL = "Such String\nOn two lines\n";
     private static final String STRING_FILENAME = "teststring.txt";
 
+    @Override
+    protected void setUp() throws Exception {
+        context = getInstrumentation().getContext();
+    }
 
+    @Override
+    protected void tearDown() throws Exception {
 
-    @Test
-    public void testDepot() {
+        super.tearDown();
+    }
 
-        Depot.with(mockContext).store(STRING_FILENAME, TEST_STRING);
+    public void testSaveAndRetrieveStringAsObject() {
 
-        assertTrue(Depot.with(mockContext).contains(STRING_FILENAME));
+        Depot.with(context).store(STRING_FILENAME, TEST_STRING);
 
-        String result = Depot.with(mockContext).retrieve(STRING_FILENAME);
-        assertThat(result, is(TEST_STRING));
+        assertTrue(Depot.with(context).contains(STRING_FILENAME));
+        String result = (String) Depot.with(context).retrieve(STRING_FILENAME);
+        assertEquals(TEST_STRING, result);
 
     }
+
+    public void testSaveAndRetrievePlainString() {
+        Depot.with(context).storeString(STRING_FILENAME, TEST_STRING);
+        assertTrue(Depot.with(context).contains(STRING_FILENAME));
+        String result = Depot.with(context).retrieveString(STRING_FILENAME);
+        assertEquals(TEST_STRING, result);
+    }
+
+    public void testSaveAndRetrieveStringWithNewline() {
+        Depot.with(context).storeString(STRING_FILENAME, TEST_STRING_NL);
+        assertTrue(Depot.with(context).contains(STRING_FILENAME));
+        String result = Depot.with(context).retrieveString(STRING_FILENAME);
+        assertEquals(TEST_STRING_NL, result);
+
+        //Also test the general object saving method
+        Depot.with(context).store(STRING_FILENAME, TEST_STRING_NL);
+        assertTrue(Depot.with(context).contains(STRING_FILENAME));
+        result = (String) Depot.with(context).retrieve(STRING_FILENAME);
+        assertEquals(TEST_STRING_NL, result);
+    }
+
 }
