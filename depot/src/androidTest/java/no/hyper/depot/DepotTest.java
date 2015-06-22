@@ -45,6 +45,7 @@ public class DepotTest extends InstrumentationTestCase{
 
     public void testSaveAndRetrieveStringWithNewline() {
         Depot.with(context).storeString(STRING_FILENAME, TEST_STRING_NL);
+
         assertTrue(Depot.with(context).contains(STRING_FILENAME));
         String result = Depot.with(context).retrieveString(STRING_FILENAME);
         assertEquals(TEST_STRING_NL, result);

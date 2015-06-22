@@ -26,17 +26,32 @@ public class Depot {
     private static Depot singleton;
     private Context context;
     private static final String TAG = "==> DEPOT <==";
+    private String directory;
 
     private Depot(Context context) {
         this.context = context.getApplicationContext();
+        directory = "";
     }
 
-    public static Depot with(Context context) {
+    public static synchronized Depot with(Context context) {
         if (singleton == null) {
             singleton = new Depot(context);
         }
+        singleton.directory = "";
         return singleton;
     }
+
+
+    public static Depot under(String directory) {
+        if (singleton == null) {
+            Log.e(TAG, "Depot is null, run like this: Depot.with(context).under(directory)");
+        }
+        else {
+            singleton.directory = directory + "/";
+        }
+        return singleton;
+    }
+
 
 
     /**
@@ -69,7 +84,7 @@ public class Depot {
     /**
      * Store a string and keep it readable for humans
      * @param name
-     * @param content
+     * @param content String to store
      */
     public void storeString(String name, String content) {
         try {
@@ -99,10 +114,11 @@ public class Depot {
             }
             Log.i(TAG, "Line count: " + list.size());
 
-            for ( int i = 0 ; i < list.size(); i++ ) {
+            for ( int i = 0 ; i < list.size()-1 ; i++ ) {
                 builder.append(list.get(i));
                 builder.append("\n");
             }
+            builder.append(list.get(list.size()-1));
             bufferedReader.close();
             return builder.toString();
         }
@@ -113,7 +129,6 @@ public class Depot {
         }
         return null;
     }
-
 
 
     public Object retrieve(String name) {
