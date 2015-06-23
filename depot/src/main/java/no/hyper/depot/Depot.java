@@ -1,6 +1,7 @@
 package no.hyper.depot;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -52,6 +53,35 @@ public class Depot {
         return singleton;
     }
 
+
+    /**
+     *
+     * Store primitives in SharedPreferences. Feels like overkill to create a separate file for each.
+     *
+     */
+    public void store(String name, boolean flag) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.putBoolean(name, flag);
+        prefs.commit();
+    }
+
+    public void store(String name, int i) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.putInt(name, i);
+        prefs.commit();
+    }
+
+    public void store(String name, float f) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.putFloat(name, f);
+        prefs.commit();
+    }
+
+    public void store(String name, long l) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.putLong(name, l);
+        prefs.commit();
+    }
 
 
     /**
