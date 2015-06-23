@@ -138,17 +138,10 @@ public class Depot {
             BufferedReader bufferedReader = new BufferedReader(reader);
             String line = "";
             StringBuilder builder = new StringBuilder();
-            List<String> list = new ArrayList();
             while ( (line = bufferedReader.readLine()) != null ) {
-                list.add(line);
-            }
-            Log.i(TAG, "Line count: " + list.size());
-
-            for ( int i = 0 ; i < list.size()-1 ; i++ ) {
-                builder.append(list.get(i));
+                builder.append(line);
                 builder.append("\n");
             }
-            builder.append(list.get(list.size()-1));
             bufferedReader.close();
             return builder.toString();
         }
@@ -169,10 +162,6 @@ public class Depot {
                 if ( inputStream != null ) {
 
                     ObjectInputStream ois = new ObjectInputStream(inputStream);
-
-//                    int size = inputStream.available();
-//                    byte[] buffer = new byte[size];
-
                     Object object = ois.readObject();
 
                     ois.close();
