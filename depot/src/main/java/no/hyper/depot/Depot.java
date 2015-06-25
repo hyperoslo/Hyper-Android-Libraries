@@ -93,15 +93,21 @@ public class Depot {
      */
     public void store(String name, Object serializableObject) {
         if ( serializableObject instanceof Serializable) {
+            BufferedOutputStream bos = null;
+            ObjectOutputStream oos = null;
             try {
-                BufferedOutputStream bos = new BufferedOutputStream(context.openFileOutput(name, Context.MODE_PRIVATE));
-                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                String tmpPath = context.getFilesDir() + "/tmp/" + name;
+                bos = new BufferedOutputStream(context.openFileOutput(tmpPath, Context.MODE_PRIVATE));
+                oos = new ObjectOutputStream(bos);
                 oos.writeObject(serializableObject);
                 oos.close();
                 Log.i(TAG, serializableObject.getClass().getSimpleName() + " object stored to file: " + context.getFilesDir() + "/" + name);
-            } catch (FileNotFoundException e) {
+            }
+            catch (FileNotFoundException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
+
                 e.printStackTrace();
             }
         }
@@ -116,7 +122,7 @@ public class Depot {
      * @param name
      * @param content String to store
      */
-    public void storeString(String name, String content) {
+    public void store(String name, String content) {
         try {
             File f = new File(context.getFilesDir(), name);
             FileWriter writer = new FileWriter(f);
