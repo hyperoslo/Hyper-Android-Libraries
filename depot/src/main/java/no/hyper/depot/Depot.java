@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -220,14 +221,29 @@ public class Depot {
     }
 
 
-    public synchronized void purge() {
+    public void purge() {
         SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
         prefs.clear();
         prefs.commit();
         File dir = context.getFilesDir();
-        String[] children = dir.list();
-        for (int i = 0; i < children.length; i++) {
-            new File(dir, children[i]).delete();
+        String[] files = dir.list();
+        for (String file : files) {
+            new File(dir, file).delete();
+        }
+    }
+
+
+    public void delete(String name) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.remove(name);
+        prefs.commit();
+        File dir = context.getFilesDir();
+        String[] files = dir.list();
+        for (String file : files) {
+            if ( file.equals(name)) {
+                new File(dir, name).delete();
+                break;
+            }
         }
     }
 }

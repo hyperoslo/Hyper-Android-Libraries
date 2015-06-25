@@ -100,4 +100,17 @@ public class DepotTest extends InstrumentationTestCase{
 
     }
 
+
+    public void testDelete() {
+        Depot.with(context).store("deleteString", "I am Jack's dead file");
+        assertTrue(Depot.with(context).contains("deleteString"));
+        Depot.with(context).delete("deleteString");
+        assertFalse(Depot.with(context).contains("deleteString"));
+
+        Depot.with(context).store("deleteInt", 42);
+        assertTrue(Depot.with(context).contains("deleteInt"));
+        Depot.with(context).delete("deleteInt");
+        assertFalse(Depot.with(context).contains("deleteInt"));
+    }
+
 }
