@@ -88,11 +88,15 @@ public class Depot {
         if ( serializableObject instanceof Serializable) {
 
             try {
-                String tmpPath = context.getFilesDir() + "/tmp/" + name;
-                BufferedOutputStream bos = new BufferedOutputStream(context.openFileOutput(tmpPath, Context.MODE_PRIVATE));
+                String tmpName = name + ".tmp";
+                String tmpPath = context.getFilesDir() + "/" + tmpName;
+                BufferedOutputStream bos = new BufferedOutputStream(context.openFileOutput(tmpName, Context.MODE_PRIVATE));
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
                 oos.writeObject(serializableObject);
                 oos.close();
+                File from = new File(tmpPath);
+                File to = new File(context.getFilesDir() + "/" + name);
+                from.renameTo(to);
                 Log.i(TAG, serializableObject.getClass().getSimpleName() + " object stored to file: " + context.getFilesDir() + "/" + name);
             }
             catch (FileNotFoundException e) {
@@ -115,10 +119,13 @@ public class Depot {
      */
     public void store(String name, String content) {
         try {
-            File f = new File(context.getFilesDir(), name);
+            String tmpName = name + ".tmp";
+            String tmpPath = context.getFilesDir() + "/" + tmpName;
+            File f = new File(tmpPath);
             FileWriter writer = new FileWriter(f);
             writer.write(content);
             writer.close();
+            f.renameTo(new File(context.getFilesDir() + "/" + name));
             Log.i(TAG, "String saved to file: " + context.getFilesDir() + "/" + name);
         }
         catch (IOException e) {
@@ -162,7 +169,6 @@ public class Depot {
                     Object object = ois.readObject();
 
                     ois.close();
-                    Log.i(TAG, "Object read: " + object.toString());
                     return object;
                 }
             }
@@ -171,7 +177,8 @@ public class Depot {
             }
             catch (IOException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -209,6 +216,18 @@ public class Depot {
         else {
             File file = new File(context.getFilesDir() + "/" + name);
             return file.exists();
+        }
+    }
+
+
+    public synchronized void purge() {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        prefs.clear();
+        prefs.commit();
+        File dir = context.getFilesDir();
+        String[] children = dir.list();
+        for (int i = 0; i < children.length; i++) {
+            new File(dir, children[i]).delete();
         }
     }
 }
