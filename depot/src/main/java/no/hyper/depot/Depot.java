@@ -140,7 +140,7 @@ public class Depot {
 
 
 
-    public String retrieveString(String name) {
+    public String getString(String name) {
         try {
             File f = new File(context.getFilesDir(), name);
             FileReader reader = new FileReader(f);
@@ -163,7 +163,7 @@ public class Depot {
     }
 
 
-    public Object retrieve(String name) {
+    public Object getObject(String name) {
 
         if (this.contains(name)) {
             try {
@@ -191,6 +191,27 @@ public class Depot {
             Log.e(TAG, "File " + name + " does not exist");
         }
         return null;
+    }
+
+
+    public int getInt(String name) {
+        SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return prefs.getInt(name, Integer.MIN_VALUE);
+    }
+
+    public long getLong(String name) {
+        SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return prefs.getLong(name, Long.MIN_VALUE);
+    }
+
+    public boolean getBoolean(String name) {
+        SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return prefs.getBoolean(name, false);
+    }
+
+    public float getFloat(String name) {
+        SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return prefs.getFloat(name, Float.MIN_VALUE);
     }
 
 
