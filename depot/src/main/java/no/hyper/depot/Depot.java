@@ -21,6 +21,11 @@ import java.util.List;
 
 /**
  * Created by espenalmdahl on 18/06/15.
+ * Depot is a convenience class for storing Strings, Serializables and primitives on disk in
+ * a key/value format.
+ *
+ * It uses SharedPreferences for primitives, while Strings and serialized objects are stored
+ * to files.
  */
 public class Depot {
 
@@ -93,12 +98,11 @@ public class Depot {
      */
     public void store(String name, Object serializableObject) {
         if ( serializableObject instanceof Serializable) {
-            BufferedOutputStream bos = null;
-            ObjectOutputStream oos = null;
+
             try {
                 String tmpPath = context.getFilesDir() + "/tmp/" + name;
-                bos = new BufferedOutputStream(context.openFileOutput(tmpPath, Context.MODE_PRIVATE));
-                oos = new ObjectOutputStream(bos);
+                BufferedOutputStream bos = new BufferedOutputStream(context.openFileOutput(tmpPath, Context.MODE_PRIVATE));
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
                 oos.writeObject(serializableObject);
                 oos.close();
                 Log.i(TAG, serializableObject.getClass().getSimpleName() + " object stored to file: " + context.getFilesDir() + "/" + name);
@@ -107,7 +111,6 @@ public class Depot {
                 e.printStackTrace();
             }
             catch (IOException e) {
-
                 e.printStackTrace();
             }
         }
@@ -192,7 +195,11 @@ public class Depot {
 
 
     public boolean contains(String name) {
-        File file = new File(context.getFilesDir() + "/" + name);
-        return file.exists();
+        SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        if ( prefs.contains(name) ) return true;
+        else {
+            File file = new File(context.getFilesDir() + "/" + name);
+            return file.exists();
+        }
     }
 }
